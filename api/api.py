@@ -46,18 +46,13 @@ async def total_queries():
 
 @app.get("/metrics/number_blacklist")
 async def number_blacklist():
+    count = client.collection("Blacklist").get_list(
+    1, 20).total_items
+
     return { "data": [{
-        "value": 100,
+        "value": count,
         "name": "Number of blacklisted websites",
         "time": "2021-10-20T12:00:00Z",
-    }, {
-        "value": 200,
-        "name": "Number of blacklisted websites",
-        "time": "2021-10-20T12:01:00Z",
-    }, {
-        "value": 300,
-        "name": "Number of blacklisted websites",
-        "time": "2021-10-20T12:02:00Z",
     }]}
 
 @app.get("/metrics/number_phishing_query")
