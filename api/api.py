@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from ai_model.fraudulent_website_detector import FraudulentWebsiteDetector
 from pocketbase import PocketBase  # Client also works the same
+from fastapi.middleware.cors import CORSMiddleware
 from pocketbase.client import FileUpload
 
 client = PocketBase("http://localhost:8090")
@@ -15,6 +16,15 @@ class PredictRequest(BaseModel):
     url: str
 
 app = FastAPI()
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 fraudulentWebsiteDetector = FraudulentWebsiteDetector()
 
 @app.post("/predict")
@@ -28,7 +38,7 @@ async def root(request: PredictRequest):
         "url": request.url,
         "domain_name": domain_name,
         "is_phishing": result.tolist()[0][0] > 0.5
-    };
+    }
 
     res = client.collection("Query").create(data)
     return (result.tolist())
@@ -56,12 +66,23 @@ async def number_blacklist():
     }]}
 
 @app.get("/metrics/number_phishing_query")
+async def number_phishing_query():
+    count = client.collection("Query").get_list(
+    1, 20, {"filter": 'is_phishing = true'}).total_items
+
+    return { "data": [{
+        "value": count,
+        "name": "Number of phishing queries",
+        "time": "2021-10-20T12:00:00Z",
+    }]}
+
+@app.get("/metrics/pourcentage_phishing")
 async def percent_phishing_query():
     count_phishing = client.collection("Query").get_list(
     1, 20, {"filter": 'is_phishing = true'}).total_items
     count_total = client.collection("Query").get_list(
     1, 20).total_items
-    percentage = count_phishing / count_total * 100
+    percentage = count_phishing / count_total
 
     return { "data": [{
         "value": percentage,
