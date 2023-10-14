@@ -66,3 +66,21 @@ async def pourcentage_phishing():
         "time": "2021-10-20T12:02:00Z",
     }]}
 
+@app.get("/metrics/number_phishing_query")
+async def number_phishing_query():
+    return { "data": [{
+        "value": 50,
+        "name": "Number of phishing queries",
+        "time": "2021-10-20T12:00:00Z",
+    }, {
+        "value": 100,
+        "name": "Number of phishing queries",
+        "time": "2021-10-20T12:01:00Z",
+    }, {
+        "value": 200,
+        "name": "Number of phishing queries",
+        "time": "2021-10-20T12:02:00Z",
+    }]}
+
+
+
