@@ -82,7 +82,7 @@ async def percent_phishing_query():
     1, 20, {"filter": 'is_phishing = true'}).total_items
     count_total = client.collection("Query").get_list(
     1, 20).total_items
-    percentage = count_phishing / count_total
+    percentage = round(count_phishing / count_total * 100, 2)
 
     return { "data": [{
         "value": percentage,

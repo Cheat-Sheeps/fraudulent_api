@@ -25,43 +25,12 @@
       {
         "datasource": {
           "type": "marcusolsson-json-datasource",
-          "uid": "ed66830f-47da-40ff-8030-14d97aaf6ca1"
+          "uid": "a2d298bd-c376-4d73-954d-e50d36a5f19c"
         },
         "fieldConfig": {
           "defaults": {
             "color": {
-              "mode": "palette-classic"
-            },
-            "custom": {
-              "axisCenteredZero": false,
-              "axisColorMode": "text",
-              "axisLabel": "",
-              "axisPlacement": "auto",
-              "barAlignment": 0,
-              "drawStyle": "line",
-              "fillOpacity": 0,
-              "gradientMode": "none",
-              "hideFrom": {
-                "legend": false,
-                "tooltip": false,
-                "viz": false
-              },
-              "insertNulls": false,
-              "lineInterpolation": "linear",
-              "lineWidth": 1,
-              "pointSize": 5,
-              "scaleDistribution": {
-                "type": "linear"
-              },
-              "showPoints": "auto",
-              "spanNulls": false,
-              "stacking": {
-                "group": "A",
-                "mode": "none"
-              },
-              "thresholdsStyle": {
-                "mode": "off"
-              }
+              "mode": "thresholds"
             },
             "mappings": [],
             "thresholds": {
@@ -81,30 +50,192 @@
           "overrides": []
         },
         "gridPos": {
-          "h": 8,
-          "w": 12,
+          "h": 3,
+          "w": 4,
           "x": 0,
           "y": 0
         },
-        "id": 4,
+        "id": 5,
         "options": {
-          "legend": {
-            "calcs": [],
-            "displayMode": "list",
-            "placement": "bottom",
-            "showLegend": true
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
           },
-          "tooltip": {
-            "mode": "single",
-            "sort": "none"
-          }
+          "textMode": "auto"
         },
+        "pluginVersion": "10.1.5",
         "targets": [
           {
             "cacheDurationSeconds": 300,
             "datasource": {
               "type": "marcusolsson-json-datasource",
+              "uid": "a2d298bd-c376-4d73-954d-e50d36a5f19c"
+            },
+            "fields": [
+              {
+                "jsonPath": "$.data[*].value"
+              }
+            ],
+            "method": "GET",
+            "queryParams": "",
+            "refId": "A",
+            "urlPath": ""
+          },
+          {
+            "cacheDurationSeconds": 300,
+            "datasource": {
+              "type": "marcusolsson-json-datasource",
+              "uid": "a2d298bd-c376-4d73-954d-e50d36a5f19c"
+            },
+            "fields": [
+              {
+                "jsonPath": ""
+              }
+            ],
+            "hide": false,
+            "method": "GET",
+            "queryParams": "",
+            "refId": "B",
+            "urlPath": ""
+          }
+        ],
+        "title": "Total Blacklisted domains",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "marcusolsson-json-datasource",
+          "uid": "ed66830f-47da-40ff-8030-14d97aaf6ca1"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 4,
+          "x": 4,
+          "y": 0
+        },
+        "id": 6,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "pluginVersion": "10.1.5",
+        "targets": [
+          {
+            "cacheDurationSeconds": 5,
+            "datasource": {
+              "type": "marcusolsson-json-datasource",
               "uid": "ed66830f-47da-40ff-8030-14d97aaf6ca1"
+            },
+            "fields": [
+              {
+                "jsonPath": "$.data[*].value"
+              }
+            ],
+            "method": "GET",
+            "queryParams": "",
+            "refId": "A",
+            "urlPath": ""
+          }
+        ],
+        "title": "Total phishing queries",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "marcusolsson-json-datasource",
+          "uid": "f0da8033-8785-4ffd-b17b-2ab0f77cb345"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "decimals": 1,
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            },
+            "unit": "percent"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 3,
+          "w": 4,
+          "x": 8,
+          "y": 0
+        },
+        "id": 2,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "textMode": "auto"
+        },
+        "pluginVersion": "10.1.5",
+        "targets": [
+          {
+            "cacheDurationSeconds": 5,
+            "datasource": {
+              "type": "marcusolsson-json-datasource",
+              "uid": "f0da8033-8785-4ffd-b17b-2ab0f77cb345"
             },
             "fields": [
               {
@@ -118,7 +249,7 @@
               {
                 "jsonPath": "$.data[*].value",
                 "language": "jsonpath",
-                "name": "count"
+                "name": "pourcentage"
               }
             ],
             "method": "GET",
@@ -127,8 +258,8 @@
             "urlPath": ""
           }
         ],
-        "title": "Total # Queries tagged as phishing",
-        "type": "timeseries"
+        "title": "% of warned website",
+        "type": "stat"
       },
       {
         "datasource": {
@@ -191,8 +322,8 @@
         "gridPos": {
           "h": 8,
           "w": 12,
-          "x": 12,
-          "y": 0
+          "x": 0,
+          "y": 3
         },
         "id": 3,
         "options": {
@@ -236,223 +367,6 @@
           }
         ],
         "title": "Total # Queries on predict",
-        "type": "timeseries"
-      },
-      {
-        "datasource": {
-          "type": "marcusolsson-json-datasource",
-          "uid": "a2d298bd-c376-4d73-954d-e50d36a5f19c"
-        },
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "palette-classic"
-            },
-            "custom": {
-              "axisCenteredZero": false,
-              "axisColorMode": "text",
-              "axisLabel": "",
-              "axisPlacement": "auto",
-              "barAlignment": 0,
-              "drawStyle": "line",
-              "fillOpacity": 0,
-              "gradientMode": "none",
-              "hideFrom": {
-                "legend": false,
-                "tooltip": false,
-                "viz": false
-              },
-              "insertNulls": false,
-              "lineInterpolation": "linear",
-              "lineWidth": 1,
-              "pointSize": 5,
-              "scaleDistribution": {
-                "type": "linear"
-              },
-              "showPoints": "auto",
-              "spanNulls": false,
-              "stacking": {
-                "group": "A",
-                "mode": "none"
-              },
-              "thresholdsStyle": {
-                "mode": "off"
-              }
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            }
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 8,
-          "w": 12,
-          "x": 0,
-          "y": 8
-        },
-        "id": 1,
-        "options": {
-          "legend": {
-            "calcs": [],
-            "displayMode": "list",
-            "placement": "bottom",
-            "showLegend": true
-          },
-          "tooltip": {
-            "mode": "single",
-            "sort": "none"
-          }
-        },
-        "targets": [
-          {
-            "cacheDurationSeconds": 5,
-            "datasource": {
-              "type": "marcusolsson-json-datasource",
-              "uid": "a2d298bd-c376-4d73-954d-e50d36a5f19c"
-            },
-            "fields": [
-              {
-                "jsonPath": "$.data[*].name"
-              },
-              {
-                "jsonPath": "$.data[*].value",
-                "language": "jsonpath",
-                "name": "count"
-              },
-              {
-                "jsonPath": "$.data[*].time",
-                "language": "jsonpath",
-                "name": "created_at"
-              }
-            ],
-            "method": "GET",
-            "queryParams": "",
-            "refId": "A",
-            "urlPath": ""
-          }
-        ],
-        "title": "Total # Websites Blacklisted",
-        "type": "timeseries"
-      },
-      {
-        "datasource": {
-          "type": "marcusolsson-json-datasource",
-          "uid": "f0da8033-8785-4ffd-b17b-2ab0f77cb345"
-        },
-        "fieldConfig": {
-          "defaults": {
-            "color": {
-              "mode": "palette-classic"
-            },
-            "custom": {
-              "axisCenteredZero": false,
-              "axisColorMode": "text",
-              "axisLabel": "",
-              "axisPlacement": "auto",
-              "barAlignment": 0,
-              "drawStyle": "line",
-              "fillOpacity": 0,
-              "gradientMode": "none",
-              "hideFrom": {
-                "legend": false,
-                "tooltip": false,
-                "viz": false
-              },
-              "insertNulls": false,
-              "lineInterpolation": "linear",
-              "lineWidth": 1,
-              "pointSize": 5,
-              "scaleDistribution": {
-                "type": "linear"
-              },
-              "showPoints": "auto",
-              "spanNulls": false,
-              "stacking": {
-                "group": "A",
-                "mode": "none"
-              },
-              "thresholdsStyle": {
-                "mode": "off"
-              }
-            },
-            "mappings": [],
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "green",
-                  "value": null
-                },
-                {
-                  "color": "red",
-                  "value": 80
-                }
-              ]
-            },
-            "unit": "percent"
-          },
-          "overrides": []
-        },
-        "gridPos": {
-          "h": 8,
-          "w": 12,
-          "x": 12,
-          "y": 8
-        },
-        "id": 2,
-        "options": {
-          "legend": {
-            "calcs": [],
-            "displayMode": "list",
-            "placement": "bottom",
-            "showLegend": true
-          },
-          "tooltip": {
-            "mode": "single",
-            "sort": "none"
-          }
-        },
-        "targets": [
-          {
-            "cacheDurationSeconds": 5,
-            "datasource": {
-              "type": "marcusolsson-json-datasource",
-              "uid": "f0da8033-8785-4ffd-b17b-2ab0f77cb345"
-            },
-            "fields": [
-              {
-                "jsonPath": "$.data[*].name"
-              },
-              {
-                "jsonPath": "$.data[*].time",
-                "language": "jsonpath",
-                "name": "created_at"
-              },
-              {
-                "jsonPath": "$.data[*].value",
-                "language": "jsonpath",
-                "name": "pourcentage"
-              }
-            ],
-            "method": "GET",
-            "queryParams": "",
-            "refId": "A",
-            "urlPath": ""
-          }
-        ],
-        "title": "% of warned website",
         "type": "timeseries"
       }
     ],
