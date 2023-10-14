@@ -1,37 +1,47 @@
+from datetime import datetime
 import json
 from fastapi import FastAPI
 from pydantic import BaseModel
 from ai_model.fraudulent_website_detector import FraudulentWebsiteDetector
+from pocketbase import PocketBase  # Client also works the same
+from pocketbase.client import FileUpload
+
+client = PocketBase("http://localhost:8090")
+
+admin_data = client.admins.auth_with_password("theodorelheureux@gmail.com", "vpCDk1%cP@Q#Htp@")
 
 class PredictRequest(BaseModel):
     words: list[str]
+    url: str
 
 app = FastAPI()
 fraudulentWebsiteDetector = FraudulentWebsiteDetector()
 
 @app.post("/predict")
 async def root(request: PredictRequest):
-    print(request)
-    page_content = " ".join(request.words)
-    print(page_content)
     result = fraudulentWebsiteDetector.predict(request.words)
     print(result.tolist())
+
+    domain_name = request.url.split("//")[1].split("/")[0]
+
+    data = {
+        "url": request.url,
+        "domain_name": domain_name,
+        "is_phishing": result.tolist()[0][0] > 0.5
+    };
+
+    res = client.collection("Query").create(data)
     return (result.tolist())
 
 @app.get("/metrics/total_queries")
 async def total_queries():
+    count = client.collection("Query").get_list(
+    1, 20).total_items
+
     return { "data": [{
-        "value": 100,
+        "value": count,
         "name": "Total queries",
         "time": "2021-10-20T12:00:00Z",
-    }, {
-        "value": 200,
-        "name": "Total queries",
-        "time": "2021-10-20T12:01:00Z",
-    }, {
-        "value": 300,
-        "name": "Total queries",
-        "time": "2021-10-20T12:02:00Z",
     }]}
 
 @app.get("/metrics/number_blacklist")
@@ -52,17 +62,17 @@ async def number_blacklist():
 
 @app.get("/metrics/pourcentage_phishing")
 async def pourcentage_phishing():
-    return { "data": [{
-        "value": 0.1,
-        "name": "Pourcentage of phishing websites",
-        "time": "2021-10-20T12:00:00Z",
-    }, {
-        "value": 0.2,
-        "name": "Pourcentage of phishing websites",
-        "time": "2021-10-20T12:01:00Z",
-    }, {
-        "value": 1.18,
-        "name": "Pourcentage of phishing websites",
-        "time": "2021-10-20T12:02:00Z",
-    }]}
+    # figure out how many queries are phishing from the database
+    # then return the pourcentage
+    count_phishing = client.collection("Query").get_list(
+    1, 20, {"filter": 'is_phishing = true'}).total_items
+    count_total = client.collection("Query").get_list(
+    1, 20).total_items
 
+    percentage = count_phishing / count_total * 100
+
+    return { "data": [{
+        "value": percentage,
+        "name": "Pourcentage of phishing queries",
+        "time": datetime.now().isoformat(),
+    }]}
