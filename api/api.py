@@ -17,3 +17,7 @@ async def root(request: PredictRequest):
     result = fraudulentWebsiteDetector.predict(request.words)
     print(result.tolist())
     return (result.tolist())
+
+@app.get("/metrics/number_blacklist")
+async def number_blacklist():
+    return { "number" : 10}
