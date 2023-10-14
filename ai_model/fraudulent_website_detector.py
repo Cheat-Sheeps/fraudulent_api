@@ -7,10 +7,10 @@ from tensorflow.keras.preprocessing.text import Tokenizer
 from tensorflow.keras.preprocessing.sequence import pad_sequences
 
 # Load the model
-model = tf.keras.models.load_model('phishing_detection.keras')
+model = tf.keras.models.load_model('ai_model/phishing_detection.keras')
 
 class FraudulentWebsiteDetector:
-    def predict(predict_msg):
+    def predict(self, predict_msg):
         token = Tokenizer()
         token.fit_on_texts(predict_msg)
         padding_type='post'
@@ -20,7 +20,7 @@ class FraudulentWebsiteDetector:
                         truncating='post')
         return (model.predict(padded))
     
-    def test():
+    def test(self):
         test_string_positive=[
             "Your account has been compromised. Please click on the link to reset your password.",
             "You have won a free trip to Hawaii! Click here to claim your prize.",
