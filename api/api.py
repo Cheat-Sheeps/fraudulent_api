@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import json
 from typing import Optional
 from fastapi import FastAPI
@@ -92,3 +92,33 @@ async def percent_phishing_query():
         "name": "Pourcentage of phishing queries",
         "time": datetime.now().isoformat(),
     }]}
+
+@app.get("/metrics/detected_phishing_last_12h")
+async def detected_phishing_last_12h():
+    count = []
+    n_hours = 12
+
+    for i in range(n_hours):
+        lowest_date = (datetime.utcnow() - timedelta(hours=i+1)).strftime("%Y-%m-%d %H:%M:%S")
+        highest_date = (datetime.utcnow() - timedelta(hours=i)).strftime("%Y-%m-%d %H:%M:%S")
+
+        print(lowest_date)
+        print(highest_date)
+
+        result = client.collection("Query").get_list(
+        1, 20, {"filter": 'is_phishing = true && created > "' + lowest_date + '" && created < "' + highest_date + '"'})
+        print(result)
+        print("\n\n\n\n")
+        count.append(result.total_items)
+
+    res = []
+
+    for i in range(n_hours):
+        res.append({
+            "value": count[i],
+            "name": "Number of phishing queries",
+            "time": (datetime.utcnow() - timedelta(hours=i)).isoformat(),
+        })
+
+    # send data array with 12 objects with value and time
+    return { "data": res}
