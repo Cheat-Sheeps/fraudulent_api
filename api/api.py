@@ -30,9 +30,26 @@ fraudulentWebsiteDetector = FraudulentWebsiteDetector()
 
 @app.post("/predict")
 async def root(request: PredictRequest):
-    result = fraudulentWebsiteDetector.predict(request.words)
     domain = request.url.split("//")[1].split("/")[0]
 
+    is_blacklisted = client.collection("Blacklist").get_list(
+    1, 20, {"filter": 'domain = "' + domain + '"'}).total_items > 0
+    is_whitelisted = client.collection("Whitelist").get_list(
+    1, 20, {"filter": 'domain = "' + domain + '"'}).total_items > 0
+
+    if request.words == []:
+        return { "data": {
+            "result": [],
+            "is_phishing": False,
+            "is_blacklisted": is_blacklisted,
+            "is_whitelisted": is_whitelisted,
+            "median": 0,
+        }}
+    
+    if len(request.words) > 50:
+        request.words = request.words[:50]
+
+    result = fraudulentWebsiteDetector.predict(request.words)
     result_flat = [item for sublist in result.tolist() for item in sublist]
     median = statistics.median(result_flat)
 
@@ -44,16 +61,13 @@ async def root(request: PredictRequest):
 
     client.collection("Query").create(data)
 
-    is_blacklisted = client.collection("Blacklist").get_list(
-    1, 20, {"filter": 'domain = "' + domain + '"'}).total_items > 0
-    is_whitelisted = client.collection("Whitelist").get_list(
-    1, 20, {"filter": 'domain = "' + domain + '"'}).total_items > 0
 
     return { "data": {
         "result": result.tolist(),
         "is_phishing": median > 0.5,
         "is_blacklisted": is_blacklisted,
-        "is_whitelisted": is_whitelisted
+        "is_whitelisted": is_whitelisted,
+        "median": median,
     }}
 
 @app.get("/metrics/total_queries")
