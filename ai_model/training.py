@@ -14,7 +14,14 @@ ham_msg=ham_msg.sample(n=len(spam_msg),random_state=42)
 balanced_data = pd.concat([ham_msg,spam_msg])
 balanced_data['label']=balanced_data['Category'].map({'ham':0,'spam':1})
 
-train_msg, test_msg, train_labels, test_labels =train_test_split(balanced_data['Message'],balanced_data['label'],test_size=0.2,random_state=434)
+# graph balanced dataset
+plt.title('Balanced Dataset')
+plt.xlabel('Category')
+plt.ylabel('Count')
+plt.hist(balanced_data['Category'],color='blue',edgecolor='black',align='mid')
+plt.show(block=True)
+
+train_msg, test_msg, train_labels, test_labels = train_test_split(balanced_data['Message'],balanced_data['label'],test_size=0.2,random_state=434)
 
 vocab_size=500
 oov_tok='<OOV>'
@@ -44,13 +51,11 @@ epoch=30
 early_stop = tf.keras.callbacks.EarlyStopping(monitor='val_loss', patience=3)
 history=model.fit(Trainning_pad, train_labels ,validation_data=(Testing_pad, test_labels),epochs=epoch,callbacks=[early_stop],verbose=2)
 
+graph = pd.DataFrame(history.history)
+graph.plot(figsize=(10,5))
+plt.grid(True)
+plt.gca().set_ylim(0,1)
+plt.show(block=True)
+
 model.evaluate(Testing_pad, test_labels)
 model.save('phishing_detection.keras')
-
-plt.plot(history.history['accuracy'])
-plt.plot(history.history['val_accuracy'])
-plt.title('model accuracy')
-plt.ylabel('accuracy')
-plt.xlabel('epoch')
-
-plt.show(block=True)
