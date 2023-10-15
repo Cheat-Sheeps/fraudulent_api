@@ -1,5 +1,6 @@
 from datetime import datetime
 import json
+from typing import Optional
 from fastapi import FastAPI
 from pydantic import BaseModel
 from ai_model.fraudulent_website_detector import FraudulentWebsiteDetector
@@ -12,8 +13,8 @@ client = PocketBase("http://localhost:8090")
 admin_data = client.admins.auth_with_password("theodorelheureux@gmail.com", "vpCDk1%cP@Q#Htp@")
 
 class PredictRequest(BaseModel):
-    words: list[str]
-    url: str
+    words: Optional[list[str]]
+    url: Optional[str]
 
 app = FastAPI()
 
@@ -29,8 +30,10 @@ fraudulentWebsiteDetector = FraudulentWebsiteDetector()
 
 @app.post("/predict")
 async def root(request: PredictRequest):
+    print("request", request)
+    print("words", request.words)
+    print("url", request.url)
     result = fraudulentWebsiteDetector.predict(request.words)
-    print(result.tolist())
 
     domain_name = request.url.split("//")[1].split("/")[0]
 
