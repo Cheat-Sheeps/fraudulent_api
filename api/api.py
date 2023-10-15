@@ -146,3 +146,14 @@ async def detected_phishing_last_12h():
 
     # send data array with 12 objects with value and time
     return { "data": res}
+
+@app.get('/metrics/total_number_whitelist')
+async def total_number_whitelist():
+    count = client.collection("Whitelist").get_list(
+    1, 20).total_items
+
+    return { "data": [{
+        "value": count,
+        "name": "Total number of whitelisted websites",
+        "time": "2021-10-20T12:00:00Z",
+    }]}
