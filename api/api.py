@@ -1,20 +1,20 @@
 from datetime import datetime, timedelta
 import json
-from typing import Optional
 from fastapi import FastAPI
 from pydantic import BaseModel
 from ai_model.fraudulent_website_detector import FraudulentWebsiteDetector
 from pocketbase import PocketBase  # Client also works the same
 from fastapi.middleware.cors import CORSMiddleware
 from pocketbase.client import FileUpload
+import statistics
 
 client = PocketBase("http://localhost:8090")
 
 admin_data = client.admins.auth_with_password("theodorelheureux@gmail.com", "vpCDk1%cP@Q#Htp@")
 
 class PredictRequest(BaseModel):
-    words: Optional[list[str]]
-    url: Optional[str]
+    words: list[str]
+    url: str
 
 app = FastAPI()
 
@@ -30,21 +30,31 @@ fraudulentWebsiteDetector = FraudulentWebsiteDetector()
 
 @app.post("/predict")
 async def root(request: PredictRequest):
-    print("request", request)
-    print("words", request.words)
-    print("url", request.url)
     result = fraudulentWebsiteDetector.predict(request.words)
+    domain = request.url.split("//")[1].split("/")[0]
 
-    domain_name = request.url.split("//")[1].split("/")[0]
+    result_flat = [item for sublist in result.tolist() for item in sublist]
+    median = statistics.median(result_flat)
 
     data = {
         "url": request.url,
-        "domain_name": domain_name,
-        "is_phishing": result.tolist()[0][0] > 0.5
+        "domain": domain,
+        "is_phishing": median > 0.5,
     }
 
-    res = client.collection("Query").create(data)
-    return (result.tolist())
+    client.collection("Query").create(data)
+
+    is_blacklisted = client.collection("Blacklist").get_list(
+    1, 20, {"filter": 'domain = "' + domain + '"'}).total_items > 0
+    is_whitelisted = client.collection("Whitelist").get_list(
+    1, 20, {"filter": 'domain = "' + domain + '"'}).total_items > 0
+
+    return { "data": {
+        "result": result.tolist(),
+        "is_phishing": median > 0.5,
+        "is_blacklisted": is_blacklisted,
+        "is_whitelisted": is_whitelisted
+    }}
 
 @app.get("/metrics/total_queries")
 async def total_queries():
